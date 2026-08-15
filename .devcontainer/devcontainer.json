@@ -1,7 +1,7 @@
 {
   "name": "Diabetes Cribado",
   "image": "mcr.microsoft.com/devcontainers/python:3.9",
-  "postCreateCommand": "pip install -r requirements.txt",
+  "postCreateCommand": "pip install --upgrade pip && pip uninstall -y scikit-learn && pip install scikit-learn==1.5.0 && pip install -r requirements.txt"
   "customizations": {
     "vscode": {
       "extensions": [
