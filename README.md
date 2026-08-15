@@ -31,8 +31,10 @@ sudo apt install python3.9 python3.9-venv python3.9-dev python3.9-tk
 ```
 Ahora creamos el entorno python:
 ```bash
-python3.9 -m venv app_diabetes_env39
-source app_diabetes_env39/bin/activate
+***n Ubuntu 26.04
+pyenv virtualenv 3.9.18 app_diabetes_env
+pyenv activate app_diabetes_env
+pip install -r requirements.txt
 ```
 
 ## Ejemplo de ejecución de la app de cribado
