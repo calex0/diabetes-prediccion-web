@@ -1,8 +1,8 @@
 {
   "name": "Diabetes Cribado RL+SHAP",
-  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "image": "mcr.microsoft.com/devcontainers/python:3.9",
 
-  "postCreateCommand": "apt-get update && apt-get install -y python3 python3-pip && pip install --upgrade pip && pip install scikit-learn==1.5.0 shap numpy pandas matplotlib joblib streamlit",
+  "postCreateCommand": "pip install --upgrade pip && pip install scikit-learn==1.2.2 shap numpy pandas matplotlib joblib streamlit",
 
   "customizations": {
     "vscode": {
@@ -22,4 +22,3 @@
     }
   }
 }
-
