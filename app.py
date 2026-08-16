@@ -5,6 +5,16 @@ import matplotlib.pyplot as plt
 import joblib
 import shap
 
+
+st.markdown("---")
+st.info("💡 **Información importante sobre el uso de esta herramienta**")
+st.caption(
+    "**Descargo de responsabilidad:** El resultado proporcionado por este modelo es una estimación estadística "
+    "y **no debe ser utilizado como un diagnóstico médico definitivo.** Las decisiones relacionadas con la salud, "
+    "cambios en el estilo de vida o tratamientos deben tomarse siempre bajo la supervisión de un médico colegiado. "
+    "El desarrollador de esta plataforma no se hace responsable del uso de la información aquí presentada."
+)
+
 # ============================================================
 # 1. Mapeo español → columnas técnicas
 # ============================================================
