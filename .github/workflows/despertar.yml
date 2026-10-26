@@ -4,14 +4,41 @@ on:
   schedule:
     # Se ejecutará automáticamente cada 8 horas (tres veces al día)
     - cron: '0 */8 * * *'
-  workflow_dispatch: # Te permite pulsar un botón y ejecutarlo a mano cuando quieras
+  workflow_dispatch: # Te permite pulsar el botón manual para probarlo ahora
 
 jobs:
   despertar:
     runs-on: ubuntu-latest
     steps:
-      - name: Hacer una visita real simulada con un navegador de GitHub
+      - name: Crear entorno de simulación de navegador
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js (Motor del navegador)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Instalar Playwright (Navegador real invisible)
         run: |
-          curl -sL -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" \
-          "https://diabetes-prediccion-web.streamlit.app" > /dev/null
-          echo "Intento de reactivación enviado con éxito."
+          npm install playwright
+          npx playwright install chromium
+
+      - name: Abrir la aplicación y esperar el renderizado de JavaScript
+        run: |
+          node -e "
+          const { chromium } = require('playwright');
+          (async () => {
+            console.log('Iniciando Chromium en la nube...');
+            const browser = await chromium.launch({ headless: true });
+            const page = await browser.newPage();
+            
+            console.log('Abriendo la aplicación...');
+            await page.goto('https://diabetes-prediccion-web.streamlit.app', { waitUntil: 'networkidle', timeout: 60000 });
+            
+            console.log('Esperando 15 segundos para la reactivación...');
+            await page.waitForTimeout(15000);
+            
+            console.log('Proceso completado.');
+            await browser.close();
+          })();
+          "
