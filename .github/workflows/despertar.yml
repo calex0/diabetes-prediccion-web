@@ -4,41 +4,59 @@ on:
   schedule:
     # Se ejecutará automáticamente cada 8 horas (tres veces al día)
     - cron: '0 */8 * * *'
-  workflow_dispatch: # Te permite pulsar el botón manual para probarlo ahora
+  workflow_dispatch: # Permite pulsar el botón manual para probarlo ahora
 
 jobs:
   despertar:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04 # Fijamos la versión para evitar alertas de cambios de sistema
     steps:
       - name: Crear entorno de simulación de navegador
         uses: actions/checkout@v4
 
-      - name: Configurar Node.js (Motor del navegador)
+      - name: Configurar Node.js (Motor del navegador actualizado)
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
 
       - name: Instalar Playwright (Navegador real invisible)
         run: |
           npm install playwright
           npx playwright install chromium
 
-      - name: Abrir la aplicación y esperar el renderizado de JavaScript
+      - name: Abrir la aplicación e interactuar con el botón de despertar
         run: |
           node -e "
           const { chromium } = require('playwright');
           (async () => {
-            console.log('Iniciando Chromium en la nube...');
+            console.log('Iniciando Chromium simulando resolución de escritorio...');
             const browser = await chromium.launch({ headless: true });
-            const page = await browser.newPage();
+            const context = await browser.newContext({
+              viewport: { width: 1280, height: 720 },
+              userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+            });
+            const page = await context.newPage();
             
             console.log('Abriendo la aplicación...');
             await page.goto('https://diabetes-prediccion-web.streamlit.app', { waitUntil: 'networkidle', timeout: 60000 });
             
-            console.log('Esperando 15 segundos para la reactivación...');
-            await page.waitForTimeout(15000);
+            console.log('Buscando el botón de reactivación...');
+            try {
+              // Busca el botón por su texto exacto en Streamlit Cloud
+              const botonDespertar = page.locator('text=\"Yes, get this app back up!\"');
+              if (await botonDespertar.isVisible()) {
+                console.log('Botón detectado. Haciendo clic para despertar la app...');
+                await botonDespertar.click();
+                // Esperamos 20 segundos tras el clic para que el servidor termine de levantar
+                await page.waitForTimeout(20000);
+                console.log('Clic efectuado y tiempo de espera completado.');
+              } else {
+                console.log('El botón no apareció. Es posible que la app ya estuviera despierta.');
+              }
+            } catch (err) {
+              console.log('No se pudo interactuar con el botón o no se requería:', err.message);
+            }
             
-            console.log('Proceso completado.');
             await browser.close();
+            console.log('Proceso completado de forma segura.');
           })();
           "
