@@ -1,0 +1,17 @@
+name: Despertador de Streamlit Cloud
+
+on:
+  schedule:
+    # Se ejecutará automáticamente cada 8 horas (tres veces al día)
+    - cron: '0 */8 * * *'
+  workflow_dispatch: # Te permite pulsar un botón y ejecutarlo a mano cuando quieras
+
+jobs:
+  despertar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hacer una visita real simulada con un navegador de GitHub
+        run: |
+          curl -sL -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" \
+          "https://diabetes-prediccion-web.streamlit.app" > /dev/null
+          echo "Intento de reactivación enviado con éxito."
